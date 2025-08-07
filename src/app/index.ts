@@ -11,7 +11,7 @@ export const Profile = lazy(() => import("./profile"));
 
 // Main pages
 export const Layout = lazy(() => import("./layout"));
-export const Home = lazy(() => import("./Home"));
+export const Home = lazy(() => import("./home"));
 export const AboutPage = lazy(() => import("./About"));
 export const Healthy = lazy(() => import("./Healthy"));
 export const ClassesPage = lazy(() => import("./Classes"));

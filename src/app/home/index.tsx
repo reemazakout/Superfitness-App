@@ -1,10 +1,10 @@
 import bgHero from "../../assets/images/hero-bg.png";
-import AboutUs from "./components/about-us/about-us";
-import ChatAi from "./components/ChatAi";
-import HeroSection from "./components/hero-section/hero";
-import MealsSection from "./components/meals-section/meals";
-import WhyUs from "./components/why-us/why-us";
-import WorkoutSection from "./components/workout/workout";
+import ChatAi from "../home/components/ChatAi";
+import HeroSection from "../home/components/hero-section/hero";
+import MealsSection from "../home/components/meals-section/meals";
+import WhyUs from "../home/components/why-us/why-us";
+import WorkoutSection from "../home/components/workout/workout";
+import AboutUs from "../home/components/about-us/about-us";
 
 export default function Home() {
   return (
