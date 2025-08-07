@@ -1,0 +1,8 @@
+{
+  "i18n-ally.localesPaths": "src/assets/Lang",
+  "i18n-ally.locales": ["en", "ar"],
+  "i18n-ally.enabledFrameworks": ["react"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.sortKeys": true
+}
