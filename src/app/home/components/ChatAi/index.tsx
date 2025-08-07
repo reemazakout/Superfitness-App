@@ -30,17 +30,23 @@ export default function ChatAi() {
     },
   ]);
 
-  const onSubmit = async (e: FormDataEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      if (!e.target[0].value) return;
+
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData(form);
+      const messageInput = formData.get("message") as string;
+
+      if (!messageInput || messageInput.trim() === "") return;
+
       setMessage([
         ...message,
         {
           content: {
             parts: [
               {
-                text: e.target[0].value,
+                text: messageInput,
               },
             ],
             role: "user",
@@ -48,7 +54,7 @@ export default function ChatAi() {
         },
       ]);
 
-      // Call Ai
+      // Call AI
       const { data } = await axios({
         method: "post",
         url: import.meta.env.VITE_URL_GEMNAI,
@@ -63,7 +69,7 @@ export default function ChatAi() {
                 {
                   text:
                     "you're fitness trainer and your answer maximum in just two rows" +
-                    e.target[0].value,
+                    messageInput,
                 },
               ],
             },
@@ -71,7 +77,9 @@ export default function ChatAi() {
         },
       }).catch((err) => {
         console.log(err);
+        throw err; // Re-throw to be caught by outer try-catch
       });
+
       const { candidates } = data;
 
       setMessage((prev) => [
@@ -88,7 +96,9 @@ export default function ChatAi() {
         },
       ]);
 
-      e.target[0].value = "";
+      // Clear the form
+      form.reset();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error(t("something-went-wrong"));
     }
@@ -97,20 +107,20 @@ export default function ChatAi() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="fixed bottom-5 right-5 flex flex-col items-center hover:cursor-pointer z-10  ">
+        <div className="fixed bottom-5 right-5 flex flex-col items-center hover:cursor-pointer z-10">
           <img
-            className=" before:content-[''] before:absolute before:w-full before:h-full before:bg-flame "
+            className="before:content-[''] before:absolute before:w-full before:h-full before:bg-flame"
             src="src\assets\images/ChatAi/robot.png"
             width={150}
             alt="robot"
           />
-          <span className="bg-flame !shadow-[20px_20px_120px_20px] !drop-shadow-2xl !shadow-flame px-4 py-2 rounded-full ">
+          <span className="bg-flame !shadow-[20px_20px_120px_20px] !drop-shadow-2xl !shadow-flame px-4 py-2 rounded-full">
             {t("Hey Ask Me")}
           </span>
         </div>
       </DialogTrigger>
-      <DialogContent className=" flex flex-col justify-between h-2/3 sm:max-w-[425px] bg-ChatAi-bg bg-cover bg-center border-flame before:border-flame before:content-[''] before:absolute before:w-full before:h-full before:backdrop-blur-[12.5px] before:bg-[#1A1A1A80] rounded-xl before:rounded-xl before:top-0 before:left-0">
-        <DialogHeader className=" relative z-10">
+      <DialogContent className="flex flex-col justify-between h-2/3 sm:max-w-[425px] bg-ChatAi-bg bg-cover bg-center border-flame before:border-flame before:content-[''] before:absolute before:w-full before:h-full before:backdrop-blur-[12.5px] before:bg-[#1A1A1A80] rounded-xl before:rounded-xl before:top-0 before:left-0">
+        <DialogHeader className="relative z-10">
           <DialogTitle>{t("Smart coach")}</DialogTitle>
         </DialogHeader>
 
@@ -118,22 +128,22 @@ export default function ChatAi() {
           {message.map((item, index) => (
             <div
               key={index}
-              className={item.content.role == "model" ? "flex  justify-start" : "flex  justify-end"}
+              className={item.content.role === "model" ? "flex justify-start" : "flex justify-end"}
             >
-              <div className={" flex justify-end gap-1 w-3/4"}>
-                {item.content.role == "model" && (
+              <div className="flex justify-end gap-1 w-3/4">
+                {item.content.role === "model" && (
                   <div className="bg-model-bg w-16 h-9 bg-center bg-cover rounded-full"></div>
                 )}
                 <span
                   className={
-                    item.content.role == "model"
-                      ? "rounded-2xl rounded-tl-none  p-2 bg-[#24242480]"
-                      : "rounded-2xl rounded-tr-none  p-2 bg-[#FF6A0080]"
+                    item.content.role === "model"
+                      ? "rounded-2xl rounded-tl-none p-2 bg-[#24242480]"
+                      : "rounded-2xl rounded-tr-none p-2 bg-[#FF6A0080]"
                   }
                 >
                   {item.content.parts[0].text}
                 </span>
-                {item.content.role != "model" && (
+                {item.content.role !== "model" && (
                   <div className="bg-human-bg w-9 h-9 bg-center bg-cover rounded-full"></div>
                 )}
               </div>
@@ -146,7 +156,7 @@ export default function ChatAi() {
             onSubmit={onSubmit}
             className="flex w-full z-10 justify-center gap-2 align-items-center"
           >
-            <Input name="message" placeholder={t("Ask Me Any Things")} className=" border-white" />
+            <Input name="message" placeholder={t("Ask Me Any Things")} className="border-white" />
             <Button type="submit">Send</Button>
           </form>
         </DialogFooter>
